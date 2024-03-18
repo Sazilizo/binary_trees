@@ -4,32 +4,42 @@
 #include "binary_trees.h"
 
 /* Original code from http://stackoverflow.com/a/13755911/5184480 */
-@@ -13,21 +15,19 @@
+
+/**
+ * print_t - Stores recursively each level in an array of strings
+ *
+ * @tree: Pointer to the node to print
+ * @offset: Offset to print
+ * @depth: Depth of the node
+ * @s: Buffer
  *
  * Return: length of printed tree after process
  */
-int print_t(const binary_tree_t *tree, int offset, int depth, char s[20][255])
 static int print_t(const binary_tree_t *tree, int offset, int depth, char **s)
 {
-	char b[20];
 	char b[6];
 	int width, left, right, is_left, i;
 
 	if (!tree)
 		return (0);
 	is_left = (tree->parent && tree->parent->left == tree);
-	width = sprintf(b, "(%03d)", tree->val);
 	width = sprintf(b, "(%03d)", tree->n);
 	left = print_t(tree->left, offset, depth + 1, s);
 	right = print_t(tree->right, offset + left + width, depth + 1, s);
-
 	for (i = 0; i < width; i++)
 		s[depth][offset + left + i] = b[i];
-
 	if (depth && is_left)
 	{
 		for (i = 0; i < width + right; i++)
-@@ -43,23 +43,57 @@ int print_t(const binary_tree_t *tree, int offset, int depth, char s[20][255])
+			s[depth - 1][offset + left + width / 2 + i] = '-';
+		s[depth - 1][offset + left + width / 2] = '.';
+	}
+	else if (depth && !is_left)
+	{
+		for (i = 0; i < left + width; i++)
+			s[depth - 1][offset - width / 2 + i] = '-';
+		s[depth - 1][offset + left + width / 2] = '.';
+	}
 	return (left + width + right);
 }
 
@@ -57,12 +67,9 @@ static size_t _height(const binary_tree_t *tree)
  */
 void binary_tree_print(const binary_tree_t *tree)
 {
-	char s[20][255];
-	size_t i;
 	char **s;
 	size_t height, i, j;
 
-	for (i = 0; i < 20; i++)
 	if (!tree)
 		return;
 	height = _height(tree);
@@ -71,14 +78,12 @@ void binary_tree_print(const binary_tree_t *tree)
 		return;
 	for (i = 0; i < height + 1; i++)
 	{
-		sprintf(s[i], "%80s", " ");
 		s[i] = malloc(sizeof(**s) * 255);
 		if (!s[i])
 			return;
 		memset(s[i], 32, 255);
 	}
 	print_t(tree, 0, 0, s);
-	for (i = 0; i < 20; i++)
 	for (i = 0; i < height + 1; i++)
 	{
 		for (j = 254; j > 1; --j)
